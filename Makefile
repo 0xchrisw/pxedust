@@ -48,18 +48,41 @@ help : ## List commands
 PHONY : bootloader
 bootloader : | setup  ## Compile the Bootloader
 -	echo -e "\033[36mCompiling the bootloader...\033[0m"
-- cd $(PROJECT_DIR)
+- cd $(SRC_DIR)
 - nasm \
 -		-f bin \
--		$(SRC_DIR)/bootloader.asm \
+-		bootloader.asm \
 -		-l $(BUILD_DIR)/debug/bootloader.lst \
 -		-o $(BUILD_DIR)/bootloader.bin
 # -		-w+all \
 
+
+#########################################
+##
+PHONY : floppy
+floppy : | setup  ## Compile the Bootloader
+-	echo -e "\033[36mCopying kernel to first sector...\033[0m"
+- cd $(PROJECT_DIR)
+-	dd status=noxfer \
+-		conv=notrunc \
+-		if=$(BUILD_DIR)/bootloader.bin \
+-		of=$(BUILD_DIR)/bootloader.flp
+
+
+#########################################
+##
+PHONY : iso
+iso: | setup floppy
+-	mkisofs \
+-		-o $(BUILD_DIR)/bootloader.iso \
+-		-b $(BUILD_DIR)/bootloader.flp \
+-		$(BUILD_DIR)/
+
+
 #########################################
 ##
 PHONY : debug
-debug : | setup bootloader  ## Setup debugging environment
+debug : | clean setup bootloader  ## Setup debugging environment
 -	echo -e "\033[36mSetting up the debug environment...\033[0m"
 -	cd $(BUILD_DIR)
 - dd if=/dev/zero count=719 bs=512 2>/dev/null | tr "\000" "\377" > \
