@@ -40,10 +40,6 @@ boot:
 
 ; =------------------------------------------------------=--
 main:
-  ; In real hardware the BIOS puts the address
-  ; of the booting drive in the dl register
-  ;mov [bootdev], dl
-
   ;; Stack Setup
 	xor ax, ax	 ; Clear AX
 	mov ds, ax   ; Set DS to 0
@@ -53,6 +49,9 @@ main:
 	mov bp, sp   ; Set Base Pointer to 0
 	; mov sp, 0xFFFF
 
+  ; In real hardware the BIOS puts the address
+  ; of the booting drive in the dl register
+  ; mov [bootdev], dl
 
   call shell_init
 	call loop_disks
