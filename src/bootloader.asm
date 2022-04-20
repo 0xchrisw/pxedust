@@ -1,27 +1,49 @@
+; =--------------------=[ PXE Dust ]=--------------------=
+; =-----------=[ (c)2022 Christopher Woodall ]=----------=
+; =------------------------------------------------------=
 
-; ---------------------------------------------------
-; PXE Dust                (c)2022 Christopher Woodall
-; ---------------------------------------------------
-;
-; ---------------------------------------------------
-
-; Compiller Info
+; ------[ Compiller Info ]
 [BITS 16]     ; 16 Bit Real Mode
-[ORG 0x7C00]  ; BIOS Entry Point (where the code is loaded)
+[ORG 0x7C00]  ; BIOS Entry Point
 
 
-; ---------------------------------------------------
-;
-jmp main
-nop
+
+; =------------------------------------------------------=
+; Fix Real Hardware USB Emulation
+;   https://stackoverflow.com/a/47320115
+boot:
+  jmp main
+  nop
+
+  ; This is not machine code, and should be skipped
+  ; FAT12 DOS 4.0 EBPB (1.44MB Floppy)
+  OEMname:           db    "mkfs.fat"  ; mkfs.fat is what OEMname mkdosfs uses
+  bytesPerSector:    dw    512         ; Bytes per sector
+  sectPerCluster:    db    1           ; Sectors in one cluster
+  reservedSectors:   dw    1           ; Sectors per boot section
+  numFAT:            db    2           ; Number of FAT tables
+  numRootDirEntries: dw    224         ; Max # of files/directories in root directory
+  numSectors:        dw    2880        ; Total number of sectors
+  mediaType:         db    0xf0        ; Media descriptor
+  numFATsectors:     dw    9           ; Sectors in FAT table
+  sectorsPerTrack:   dw    18          ; Sectors per lane
+  numHeads:          dw    2           ; Number of heads
+  numHiddenSectors:  dd    0           ; Hidden sectors?
+  numSectorsHuge:    dd    0           ; FAT32 information, unnecessary for FAT12
+  driveNum:          db    0           ; Drive number
+  reserved:          db    0           ; Reserved
+  signature:         db    0x29        ; Media Signature: 41 = floppy, 29 = hard disk
+  volumeID:          dd    0x2d7e5a1a  ; Volume ID: any *unique* number
+  volumeLabel:       db    "PXEDUST    "  ; Volume Label: strict 11 characters
+  fileSysType:       db    "FAT12   "     ; Filesystem type: FAT12
 
 
-; ---------------------------------------------------
-; FAT12 File System (1.44MB)
-
-
-; ---------------------------------------------------
+; =------------------------------------------------------=--
 main:
+  ; In real hardware the BIOS puts the address
+  ; of the booting drive in the dl register
+  ;mov [bootdev], dl
+
   ;; Stack Setup
 	xor ax, ax	 ; Clear AX
 	mov ds, ax   ; Set DS to 0
@@ -31,41 +53,28 @@ main:
 	mov bp, sp   ; Set Base Pointer to 0
 	; mov sp, 0xFFFF
 
+
+  ; call shell_init
 	call loop_disks
 
 	jmp	$
 
-
-; ---------------------------------------------------
-loop_disks:
-  .loop:
-    call write_disk
-    jc .done
-		mov ax, [bootdev]
-    add ax, 0x01
-    mov [bootdev], ax
-    jmp .loop
-  .done:
-    ret
+; ------[ Dependencies ]
+%include "shell.asm"
+%include "disks.asm"
 
 
-; ---------------------------------------------------
-write_disk:
-    mov ah, 0x03
-    mov bx, DUST
-    mov	al, 1	; Write one sector
-    mov	ch, 0	; First track
-    mov	cl, 1	; First sector
-    mov	dh, 0	; First head - assume only one
-    mov dl, [bootdev]
-    int 0x13
-
-		ret
-
-
+; TODO - Should this be hardcoded or will BIOS set this for you?
 bootdev db 0x80	; Boot device number
 
 DUST  db  "ALL YOUR INODES ARE BELONG TO US...",0xD,0xA,0
 
+TEST_STR db 'Hell0 World!', 0
+
 times	510-($-$$)	db	0
 dw	0xAA55
+
+
+
+; =------------------------------------------------------=
+
