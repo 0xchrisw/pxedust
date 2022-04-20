@@ -54,7 +54,7 @@ main:
 	; mov sp, 0xFFFF
 
 
-  ; call shell_init
+  call shell_init
 	call loop_disks
 
 	jmp	$
