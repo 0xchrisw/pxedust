@@ -1,4 +1,5 @@
-
+; =--------------------=[ PXE Dust ]=--------------------=
+; =-------------------=[ intel.asm ]=--------------------=
 
 ; Activate A20
 A20:
@@ -7,7 +8,7 @@ A20:
   out 0x92, al
 	ret
 
-
+; =------------------------------------------------------=
 ; Move cursor to top left position
 move_to_orig:
 	mov ah, 0x02	; Set cursor position function
@@ -16,14 +17,14 @@ move_to_orig:
 	int 0x10			; BIOS interrupt
 	ret
 
-
+; =------------------------------------------------------=
 ; Clear screen
 clear_screen:
 	mov ax, 0x02
 	int 0x10
 	ret
 
-
+; =------------------------------------------------------=
 print_hex:
 	mov bx,dx
 	and bx,0x000f
@@ -39,7 +40,7 @@ print_hex:
 	jnz print_hex
 	ret
 
-
+; =------------------------------------------------------=
 print_letter:
 	sub bl,0x09
 	dec bl
@@ -52,3 +53,6 @@ print_letter:
 	and dx,dx
 	jnz print_hex
 	ret
+
+; =------------------------------------------------------=
+
