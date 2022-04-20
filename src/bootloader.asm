@@ -59,8 +59,8 @@ main:
 	jmp	$
 
 ; ------[ Dependencies ]
-%include "shell.asm"
-%include "disks.asm"
+%include "inc/shell.asm"
+%include "inc/disks.asm"
 
 
 ; TODO - Should this be hardcoded or will BIOS set this for you?
