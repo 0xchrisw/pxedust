@@ -23,7 +23,7 @@ write_disk:
   mov	cl, 1	; First sector
   mov	dh, 0	; First head - assume only one
   mov dl, [bootdev]
-  ; stc    ; Adjust the Carry just in case, INT 13h will clean it if there is no error
+  ; stc    ; Adjust Carry -INT 0x13 will clean it if there is no error
   ; pusha
   int 0x13
   ; popa
