@@ -79,6 +79,13 @@ iso: | setup floppy
 -		$(BUILD_DIR)/
 
 
+# TODO - Emulate SeaBIOS
+# git clone https://github.com/coreboot/seabios
+# cd seabios
+# make
+# qemu -bios out/bios.bin
+
+
 #########################################
 ##
 PHONY : debug
@@ -93,7 +100,16 @@ debug : | clean setup bootloader  ## Setup debugging environment
 -	  -boot d \
 -	  -hda ./debug/hda.img \
 -	  -hdb ./debug/hdb.img \
+# -	  -S -s
 # -	  -vga none -nograsphic
+
+
+#########################################
+# TODO - Attach gdb
+# https://github.com/gotoco/PE_Bootloader_x86
+
+#########################################
+# TODO - Dump hex of attached images
 # hexdump -C hdb_zero.img
 # hexdump -C hda_padded.img
 
