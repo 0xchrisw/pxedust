@@ -83,7 +83,7 @@ iso: | setup floppy
 ##
 PHONY : debug
 debug : | clean setup bootloader  ## Setup debugging environment
--	echo -e "\033[36mSetting up the debug environment...\033[0m"
+-	echo -e "\033[36mLoading the debug environment...\033[0m"
 -	cd $(BUILD_DIR)
 - dd if=/dev/zero count=719 bs=512 2>/dev/null | tr "\000" "\377" > \
 -		./debug/hda.img
@@ -93,7 +93,7 @@ debug : | clean setup bootloader  ## Setup debugging environment
 -	  -boot d \
 -	  -hda ./debug/hda.img \
 -	  -hdb ./debug/hdb.img \
--	  -vga none -nographic
+# -	  -vga none -nograsphic
 # hexdump -C hdb_zero.img
 # hexdump -C hda_padded.img
 
