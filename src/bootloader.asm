@@ -70,13 +70,7 @@ DUST  db  "ALL YOUR INODES ARE BELONG TO US...",0xD,0xA,0
 
 TEST_STR db 'Hell0 World!', 0
 
+; ------[ MBR Signature ]
 times	510-($-$$)	db	0
+db 0x55
 dw	0xAA55
-
-
-; =------------------------------------------------------=
-; =----------------------=[ NOTES ]=---------------------=
-;  Bootloader
-;   $ wget https://www.alchemistowl.org/pocorgtfo/pocorgtfo21.pdf
-;   $ unzip pocorgtfo21.pdf
-; =------------------------------------------------------=
