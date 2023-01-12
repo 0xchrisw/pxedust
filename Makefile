@@ -113,6 +113,11 @@ debug : | clean setup bootloader  ## Setup debugging environment
 # hexdump -C hdb_zero.img
 # hexdump -C hda_padded.img
 
+#########################################
+##
+PHONY: test
+test: test.img ## Test the images
+	qemu -hda ./$(DISK_IMG) -net nic -net user -boot n -tftp $(DIR_TFTP) -bootp /pxelinux.0
 
 #########################################
 ##
