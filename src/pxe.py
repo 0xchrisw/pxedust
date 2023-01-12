@@ -44,8 +44,9 @@ if __name__ == "__main__":
 
 """
 NOTES:
-  - C:  https://github.com/Oline/bootpxe
-  - Go: https://github.com/DSpeichert/netbootd
-  - Go: https://github.com/DongJeremy/pxesrv
-  - Go: https://github.com/p3lim/pixie
+  - ASM:  https://github.com/XlogicX/Learn/blob/master/ASM_x86/LinuxAPI_17_sockets.asm
+  - C:    https://github.com/Oline/bootpxe
+  - Go:   https://github.com/DSpeichert/netbootd
+  - Go:   https://github.com/DongJeremy/pxesrv
+  - Go:   https://github.com/p3lim/pixie
 """
