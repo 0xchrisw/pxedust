@@ -2,11 +2,11 @@
 ## Preamble
 SHELL       := $(shell which bash)
 .SHELLFLAGS := -eu -o pipefail -c
-.ONESHELL:             ;   # Recipes execute in same shell
-.NOTPARALLEL:          ;   # Wait for this target to finish
-.SILENT:               ; 	 # No need for @
-.EXPORT_ALL_VARIABLES: ;   # Export variables to child processes.
-.DELETE_ON_ERROR:      ;	 # Delete files on error
+.ONESHELL:             ;    # Recipes execute in same shell
+.NOTPARALLEL:          ;    # Wait for this target to finish
+.SILENT:               ;    # No need for @
+.EXPORT_ALL_VARIABLES: ;    # Export variables to child processes.
+.DELETE_ON_ERROR:      ;    # Delete files on error
 
 # Modify the block character to be `-\t` instead of `\t`
 ifeq ($(origin .RECIPEPREFIX), undefined)
@@ -29,9 +29,9 @@ all: help
 #########################################
 ## Variables
 PROJECT_DIR := $(shell pwd)
-SRC_DIR 		:= $(PROJECT_DIR)/src
-BUILD_DIR 	:= $(PROJECT_DIR)/build
-DEBUG_DIR 	:= $(BUILD_DIR)/debug
+SRC_DIR     := $(PROJECT_DIR)/src
+BUILD_DIR   := $(PROJECT_DIR)/build
+DEBUG_DIR   := $(BUILD_DIR)/debug
 
 
 #########################################
@@ -48,8 +48,8 @@ help : ## List commands
 PHONY : bootloader
 bootloader : | setup  ## Compile the Bootloader
 -	echo -e "\033[36mCompiling the bootloader...\033[0m"
-- cd $(SRC_DIR)
-- nasm \
+-	cd $(SRC_DIR)
+-	nasm \
 -		-f bin \
 -		bootloader.asm \
 -		-l $(BUILD_DIR)/debug/bootloader.lst \
@@ -62,12 +62,13 @@ bootloader : | setup  ## Compile the Bootloader
 PHONY : floppy
 floppy : | setup  ## Compile the Bootloader
 -	echo -e "\033[36mCopying kernel to first sector...\033[0m"
-- cd $(PROJECT_DIR)
+-	cd $(PROJECT_DIR)
 -	dd status=noxfer \
 -		conv=notrunc \
 -		if=$(BUILD_DIR)/bootloader.bin \
 -		of=$(BUILD_DIR)/bootloader.flp
-
+# -	perl -0777pe '$_=reverse $_'  bin/tmp.bin > bin/tmp2.bin
+# -	cat bin/tmp.bin bin/tmp2.bin > bin/bootnoodle.bin
 
 #########################################
 ##
@@ -92,14 +93,14 @@ PHONY : debug
 debug : | clean setup bootloader  ## Setup debugging environment
 -	echo -e "\033[36mLoading the debug environment...\033[0m"
 -	cd $(BUILD_DIR)
-- dd if=/dev/zero count=719 bs=512 2>/dev/null | tr "\000" "\377" > \
+-	dd if=/dev/zero count=719 bs=512 2>/dev/null | tr "\000" "\377" > \
 -		./debug/hda.img
-- dd if=/dev/zero of=./debug/hdb.img count=719 bs=512 2>/dev/null
+-	dd if=/dev/zero of=./debug/hdb.img count=719 bs=512 2>/dev/null
 -	qemu-system-x86_64 \
--	  -fda bootloader.bin \
--	  -boot d \
--	  -hda ./debug/hda.img \
--	  -hdb ./debug/hdb.img \
+-		-fda bootloader.bin \
+-		-boot d \
+-		-hda ./debug/hda.img \
+-		-hdb ./debug/hdb.img \
 # -	  -S -s
 # -	  -vga none -nograsphic
 
@@ -117,7 +118,7 @@ debug : | clean setup bootloader  ## Setup debugging environment
 ##
 PHONY: test
 test: test.img ## Test the images
-	qemu -hda ./$(DISK_IMG) -net nic -net user -boot n -tftp $(DIR_TFTP) -bootp /pxelinux.0
+-	qemu -hda ./$(DISK_IMG) -net nic -net user -boot n -tftp $(DIR_TFTP) -bootp /pxelinux.0
 
 #########################################
 ##
