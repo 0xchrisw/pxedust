@@ -67,8 +67,7 @@ floppy : | setup  ## Compile the Bootloader
 -		conv=notrunc \
 -		if=$(BUILD_DIR)/bootloader.bin \
 -		of=$(BUILD_DIR)/bootloader.flp
-# -	perl -0777pe '$_=reverse $_'  bin/tmp.bin > bin/tmp2.bin
-# -	cat bin/tmp.bin bin/tmp2.bin > bin/bootnoodle.bin
+
 
 #########################################
 ##
@@ -101,8 +100,6 @@ debug : | clean setup bootloader  ## Setup debugging environment
 -		-boot d \
 -		-hda ./debug/hda.img \
 -		-hdb ./debug/hdb.img \
-# -	  -S -s
-# -	  -vga none -nograsphic
 
 
 #########################################
